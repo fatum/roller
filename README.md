@@ -1,24 +1,41 @@
 # Roller
 
-TODO: Write a gem description
+Roller provides
+
+* tasks for generation nginx, unicorn, rbenv, logrotate etc. config files
+* generator for deploy config files
+* based on Capistrano 3.x
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
-    gem 'roller'
+    gem 'roller', github: 'fatum/roller'
 
 And then execute:
 
     $ bundle
 
-Or install it yourself as:
-
-    $ gem install roller
-
 ## Usage
 
-TODO: Write usage instructions here
+Roller support these commands
+
+* `roller init NAME` generates config files and appends gems into Gemfile
+
+Available deploy tasks
+
+### rbenv
+
+`require 'roller/tasks/rbenv'`
+
+Tasks
+
+* `rbenv:install` downloads rbenv and install provided ruby version
+* `rbenv:update` updates available ruby versions and install new reby version
+
+Variables
+
+* `ruby_version` default is 2.1.1
 
 ## Contributing
 

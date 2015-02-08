@@ -3,6 +3,7 @@ namespace :deploy do
 
   set :branch, ENV["REVISION"] || ENV["BRANCH_NAME"] || "master"
   set :linked_files, %w{config/database.yml}
+  set :repo_host, 'git.bitbucket.org'
 
   # dirs we want symlinking to shared
   set :linked_dirs, %w{bin log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system}

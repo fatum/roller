@@ -15,7 +15,7 @@ set :repository_cache, "git_cache"
 set :deploy_to, -> { File.join(fetch(:root_dir), fetch(:application), fetch(:stage).to_s) }
 set :deploy_via, :remote_cache
 
-set :full_app_name, "#{fetch(:application)}-#{fetch(:stage)}"
+set :ssh_key_path, File.expand_path("../deploy/ssh", __FILE__)
 
 # which config files should be copied by deploy:setup_config
 set(:config_files, %w(

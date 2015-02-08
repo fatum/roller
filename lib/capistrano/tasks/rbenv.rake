@@ -4,8 +4,10 @@ namespace :rbenv do
     'PATH' => "/home/#{fetch(:user)}/.rbenv/shims:/home/#{fetch(:user)}/.rbenv/bin:$PATH"
   }}
 
+  set :ruby_version, "2.1.2"
+
   desc 'Update ruby version'
-  task :update_rbenv do
+  task :update do
     on roles(:app) do
       ruby_version = fetch(:ruby_version)
 
@@ -23,22 +25,35 @@ namespace :rbenv do
     on roles(:app) do
       ruby_version = fetch(:ruby_version)
 
-      put bashrc, "/tmp/rbenvrc"
-      run "cat /tmp/rbenvrc ~/.bashrc > ~/.bashrc.tmp"
-      run "mv ~/.bashrc.tmp ~/.bashrc"
-      run %q{export PATH="$HOME/.rbenv/bin:$PATH"}
-      run %q{eval "$(rbenv init -)"}
+      sudo "apt-get update"
+      sudo "apt-get -y install curl imagemagick libmysqlclient-dev git-core gcc g++ make libssl-dev"
 
-      # Check if rbenv already installed
-      cmd = <<-CMD
-if [ ! -d $HOME/.rbenv/versions/#{ruby_version}/bin ]; then \
-    rbenv install #{ruby_version} && \
-    rbenv global #{ruby_version} && \
-    gem install bundler --no-ri --no-rdoc && \
-    rbenv rehash;
+      execute "curl -L https://raw.github.com/fesplugas/rbenv-installer/master/bin/rbenv-installer | bash"
+
+      bashrc = <<-BASHRC
+if [ -d $HOME/.rbenv ]; then
+  export PATH="$HOME/.rbenv/bin:$PATH"
+  eval "$(rbenv init -)"
 fi
-CMD
-      run cmd
+      BASHRC
+
+      upload! StringIO.new(bashrc), "/tmp/rbenvrc"
+
+      execute "cat /tmp/rbenvrc ~/.bashrc > ~/.bashrc.tmp"
+      execute "mv ~/.bashrc.tmp ~/.bashrc"
+      execute %q{export PATH="$HOME/.rbenv/bin:$PATH"}
+      execute %q{eval "$(rbenv init -)"}
+
+      if test("! -d $HOME/.rbenv/versions/#{ruby_version}/bin")
+        # Check if rbenv already installed
+        cmd = <<-CMD
+rbenv install #{ruby_version} && \
+rbenv global #{ruby_version} && \
+gem install bundler --no-ri --no-rdoc && \
+rbenv rehash;
+        CMD
+        execute cmd
+      end
     end
   end
 end
