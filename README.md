@@ -113,6 +113,10 @@ set(:symlinks, [
 ])
 ```
 
+## TODO
+
+* Use https://github.com/sonots/capistrano-bundle_rsync
+
 ## Contributing
 
 1. Fork it ( https://github.com/[my-github-username]/roller/fork )
