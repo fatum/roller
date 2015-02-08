@@ -83,7 +83,8 @@ Available deploy tasks
 
 #### Variables
 
-* `config_files`
+* `config_files` These files compiles using ERB and uploads to shared_path/config/
+
 ```ruby
 set(:config_files, %w(
   nginx.conf
@@ -93,7 +94,7 @@ set(:config_files, %w(
 ))
 ```
 
-* `symlinks`
+* `symlinks` Compiled files can be symlinked into /etc/
 
 ```ruby
 set(:symlinks, [
