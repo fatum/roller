@@ -5,29 +5,23 @@ set :user, "ubuntu"
 set :run_user, "www-data"
 set :run_group, "www-data"
 
-set :root_dir, -> { "/home/#{user}" }
+set :root_dir, -> { "/home/#{fetch(:user)}" }
 
 set :scm, :git
 set :scm_verbose, true
 set :repo_url, "YOUR REPO URL"
 
-set :branch, "master"
-
 set :repository_cache, "git_cache"
-set :deploy_to, -> { File.join(fetch(:root_dir), fetch(:application), fetch(:stage)) }
+set :deploy_to, -> { File.join(fetch(:root_dir), fetch(:application), fetch(:stage).to_s) }
 set :deploy_via, :remote_cache
 
 set :full_app_name, "#{fetch(:application)}-#{fetch(:stage)}"
-
-set :linked_files, %w{config/database.yml}
-
-# dirs we want symlinking to shared
-set :linked_dirs, %w{bin log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system}
 
 # which config files should be copied by deploy:setup_config
 set(:config_files, %w(
   nginx.conf
   unicorn.rb
+  unicorn_init.sh
   database.yml
 ))
 
@@ -51,11 +45,15 @@ set(:symlinks, [
   },
 ])
 
+require 'roller/tasks'
+
 <% if rbenv? %>
 require 'roller/tasks/rbenv'
 <% end %>
 <% if rails? %>
-require 'capistrano/rails'
+# require 'capistrano/rails/assets'
+# require 'roller/tasks/assets'
+require 'capistrano/rails/migrations'
 set :rails_env, "production"
 <% end %>
 <% if bundler? %>

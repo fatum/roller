@@ -6,21 +6,21 @@ server {
   listen <%= fetch(:nginx_port) || 80 %>;
 
   <% if fetch(:nginx_server_name) %>
-    server_name <%= fetch(:nginx_server_name) %>;
+  server_name <%= fetch(:nginx_server_name) %>;
   <% end %>
 
   <% if fetch(:nginx_ssl) %>
-    listen   443;
+  listen   443;
 
-    ssl on;
-    ssl_certificate <%= shared_path %>/ssl.crt;
-    ssl_certificate_key <%= shared_path %>/ssl.key;
+  ssl on;
+  ssl_certificate <%= shared_path %>/ssl.crt;
+  ssl_certificate_key <%= shared_path %>/ssl.key;
 
-    # Add perfect forward secrecy
-    ssl_prefer_server_ciphers on;
+  # Add perfect forward secrecy
+  ssl_prefer_server_ciphers on;
 
-    # Add HSTS
-    add_header Strict-Transport-Security "max-age=31536000; includeSubdomains";
+  # Add HSTS
+  add_header Strict-Transport-Security "max-age=31536000; includeSubdomains";
   <% end %>
 
   root <%= current_path %>/public;
@@ -40,7 +40,7 @@ server {
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     proxy_set_header Host $http_host;
     proxy_redirect off;
-    proxy_pass http://<%= fetch(:application) %>-<%= fetch(:stage) %>-upstream;
+    proxy_pass http://<%= fetch(:full_app_name) %>-upstream;
   }
 
   error_page 500 502 503 504 /500.html;

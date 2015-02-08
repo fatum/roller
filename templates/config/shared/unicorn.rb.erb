@@ -1,10 +1,9 @@
-root = "<%= current_path %>"
-working_directory root
-pid "#{root}/tmp/pids/unicorn.pid"
-stderr_path "#{root}/log/unicorn.log"
-stdout_path "#{root}/log/unicorn.log"
+working_directory current_path
+pid "#{current_path}/tmp/pids/unicorn.pid"
+stderr_path "#{current_path}/log/unicorn.log"
+stdout_path "#{current_path}/log/unicorn.log"
 
-listen <%= "#{root}/tmp/sockets/unicorn.sock" %>
+listen <%= "#{current_path}/tmp/sockets/unicorn.sock" %>
 
 worker_processes <%= fetch(:unicorn_workers, 2) %>
 
@@ -12,7 +11,7 @@ timeout 30
 preload_app true
 
 before_exec do |server|
-  ENV['BUNDLE_GEMFILE'] = "#{root}/Gemfile"
+  ENV['BUNDLE_GEMFILE'] = "#{current_path}/Gemfile"
 end
 
 before_fork do |server, worker|

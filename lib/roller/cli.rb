@@ -14,8 +14,11 @@ module Roller
 
       copy_file 'config/shared/logrotate.conf.erb', destination_to('config/deploy/shared/logrotate.conf.erb')
       copy_file 'config/shared/nginx.conf.erb', destination_to('config/deploy/shared/nginx.conf.erb')
-      copy_file 'config/shared/unicorn.rb.erb', destination_to('config/deploy/shared/unicorn.rb.erb')
-      copy_file 'config/shared/unicorn_init.sh.erb', destination_to('config/deploy/shared/unicorn_init.sh.erb')
+
+      if ruby?
+        copy_file 'config/shared/unicorn.rb.erb', destination_to('config/deploy/shared/unicorn.rb.erb')
+        copy_file 'config/shared/unicorn_init.sh.erb', destination_to('config/deploy/shared/unicorn_init.sh.erb')
+      end
 
       append_to_gemfile 'capistrano-bundler' if bundler?
       append_to_gemfile 'capistrano-rbenv' if rbenv?
