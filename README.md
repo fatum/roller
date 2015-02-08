@@ -20,7 +20,8 @@ And then execute:
 
 Roller support these commands
 
-* `roller init NAME` generates config files and appends gems into Gemfile
+* `roller rails NAME` generates config files and appends gems into Gemfile
+* `roller ruby NAME`
 
 Available deploy tasks
 
@@ -86,18 +87,18 @@ Available deploy tasks
 * `config_files` These files compiles using ERB and uploads to shared_path/config/
 
 ```ruby
-set(:config_files, %w(
+set :config_files, %w(
   nginx.conf
   unicorn.rb
   unicorn_init.sh
   database.yml
-))
+)
 ```
 
 * `symlinks` Compiled files can be symlinked into /etc/
 
 ```ruby
-set(:symlinks, [
+set :symlinks, [
   {
     source: "nginx.conf",
     link: "/etc/nginx/sites-enabled/app-{{full_app_name}}"
@@ -110,7 +111,7 @@ set(:symlinks, [
     source: "logrotate",
     link: "/etc/logrotate.d/app-{{full_app_name}}"
   },
-])
+]
 ```
 
 ## TODO
