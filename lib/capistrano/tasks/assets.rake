@@ -1,4 +1,8 @@
 namespace :deploy do
+  task :assets => :deploy do
+    invoke :compile_assets_locally
+  end
+
   desc "Compiles assets locally then rsyncs"
   task :compile_assets_locally do
     run_locally do
@@ -7,10 +11,10 @@ namespace :deploy do
 
     on roles(:app) do |role|
       run_locally do
-        execute "rsync -av ./public/assets/ #{role.user}@#{role.hostname}:#{release_path}/public/assets/;"
+        execute "rsync -av ./public/assets/ #{role.user}@#{role.hostname}:#{shared_path}/public/assets/;"
       end
 
-      sudo "chmod -R 755 #{release_path}/public/assets/"
+      sudo "chmod -R 755 #{shared_path}/public/assets/"
     end
 
     run_locally do
