@@ -39,6 +39,8 @@ Available deploy tasks
 
 ### SSH
 
+`require 'roller/tasks/ssh'`
+
 #### Tasks
 
 * `ssh:setup` upload ssh keys and update known_hosts with fingerprint
@@ -47,6 +49,68 @@ Available deploy tasks
 
 * `ssh_key_path` path to ssh keys (config/deploy/ssh)
 * `ssh_repo_host` host which adds into known_hosts
+
+### Assets
+
+`require 'roller/tasks/assets'`
+
+#### Tasks
+
+* `deploy:compile_assets_locally` compile assets locally and upload it using rsync
+
+### Nginx
+
+`require 'roller/tasks/nginx'`
+
+#### Tasks
+
+* `nginx:[start|stop|restart|reload]` nginx's commands
+* `nginx:remove_default_vhost`
+
+#### Variables
+
+* `nginx_port`
+* `nginx_server_name`
+* `nginx_ssl` flag for enabling ssl mode
+
+### Setup Configuration
+
+`require 'roller/tasks/setup_config'`
+
+#### Tasks
+
+* `deploy:setup_config`
+
+#### Variables
+
+* `config_files`
+```ruby
+set(:config_files, %w(
+  nginx.conf
+  unicorn.rb
+  unicorn_init.sh
+  database.yml
+))
+```
+
+* `symlinks`
+
+```ruby
+set(:symlinks, [
+  {
+    source: "nginx.conf",
+    link: "/etc/nginx/sites-enabled/app-{{full_app_name}}"
+  },
+  {
+    source: "unicorn_init.sh",
+    link: "/etc/init.d/app-{{full_app_name}}-unicorn"
+  },
+  {
+    source: "logrotate",
+    link: "/etc/logrotate.d/app-{{full_app_name}}"
+  },
+])
+```
 
 ## Contributing
 
