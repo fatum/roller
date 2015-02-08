@@ -1,7 +1,7 @@
 namespace :ssh do
   task :setup do
     on roles(:app) do
-      host = fetch(:repo_host)
+      host = fetch(:ssh_repo_host)
       user = fetch(:user)
 
       known_hosts = "~/known_hosts"

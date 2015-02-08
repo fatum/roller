@@ -4,26 +4,24 @@ namespace :rbenv do
     'PATH' => "/home/#{fetch(:user)}/.rbenv/shims:/home/#{fetch(:user)}/.rbenv/bin:$PATH"
   }}
 
-  set :ruby_version, "2.1.2"
-
   desc 'Update ruby version'
   task :update do
     on roles(:app) do
-      ruby_version = fetch(:ruby_version)
+      ruby_version = fetch(:ruby_version, "2.1.2")
 
-      run "cd ~/.rbenv/plugins/ruby-build && git pull"
-      run "rbenv install #{ruby_version}"
-      run "rbenv local #{ruby_version}"
-      run "gem install bundler --no-ri --no-rdoc"
+      execute "cd ~/.rbenv/plugins/ruby-build && git pull"
+      execute "rbenv install #{ruby_version}"
+      execute "rbenv local #{ruby_version}"
+      execute "gem install bundler --no-ri --no-rdoc"
 
-      run "rbenv rehash"
+      execute "rbenv rehash"
     end
   end
 
   desc 'Install RVM'
   task :install do
     on roles(:app) do
-      ruby_version = fetch(:ruby_version)
+      ruby_version = fetch(:ruby_version, "2.1.2")
 
       sudo "apt-get update"
       sudo "apt-get -y install curl imagemagick libmysqlclient-dev git-core gcc g++ make libssl-dev"
