@@ -1,0 +1,26 @@
+start on starting app-<%= application %>-<%= stage %>
+stop on stopping app-<%= application %>-<%= stage %>
+respawn
+respawn limit 3 30
+
+normal exit 0 TERM USR1
+
+env PATH=/home/<%= user%>/.rbenv/shims:/home/<%= user %>/.rbenv/bin:/usr/bin:/usr/local/bin:/bin
+env HOME=/var/www
+env RAILS_ENV=<%= rails_env %>
+env RACK_ENV=<%= rails_env %>
+
+chdir <%= daemon_cwd %>
+setuid <%= run_user %>
+setgid <%= run_group %>
+
+script
+
+# this script runs in /bin/sh by default
+# respawn as bash so we can source in rbenv
+exec /bin/bash <<EOT
+  touch <%= daemon_log %>
+  exec bundle exec <%= daemon_command %> >> <%= daemon_log %> 2>&1
+EOT
+
+end script

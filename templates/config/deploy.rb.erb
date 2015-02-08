@@ -1,0 +1,70 @@
+set :application, "<%= name %>"
+set :ssh_options, {keys: "~/ssh/<%= name %>.pem"}
+
+set :user, "ubuntu"
+set :run_user, "www-data"
+set :run_group, "www-data"
+
+set :root_dir, -> { "/home/#{user}" }
+
+set :scm, :git
+set :scm_verbose, true
+set :repo_url, "YOUR REPO URL"
+
+set :branch, "master"
+
+set :repository_cache, "git_cache"
+set :deploy_to, -> { File.join(fetch(:root_dir), fetch(:application), fetch(:stage)) }
+set :deploy_via, :remote_cache
+
+set :full_app_name, "#{fetch(:application)}-#{fetch(:stage)}"
+
+set :linked_files, %w{config/database.yml}
+
+# dirs we want symlinking to shared
+set :linked_dirs, %w{bin log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system}
+
+# which config files should be copied by deploy:setup_config
+set(:config_files, %w(
+  nginx.conf
+  unicorn.rb
+  database.yml
+))
+
+# files which need to be symlinked to other parts of the
+# filesystem. For example nginx virtualhosts, log rotation
+# init scripts etc. The full_app_name variable isn't
+# available at this point so we use a custom template {{}}
+# tag and then add it at run time.
+set(:symlinks, [
+  {
+    source: "nginx.conf",
+    link: "/etc/nginx/sites-enabled/app-{{full_app_name}}"
+  },
+  {
+    source: "unicorn_init.sh",
+    link: "/etc/init.d/app-{{full_app_name}}-unicorn"
+  },
+  {
+    source: "logrotate",
+    link: "/etc/logrotate.d/app-{{full_app_name}}"
+  },
+])
+
+<% if rbenv? %>
+require 'roller/tasks/rbenv'
+<% end %>
+<% if rails? %>
+require 'capistrano/rails'
+set :rails_env, "production"
+<% end %>
+<% if bundler? %>
+require 'capistrano/bundler'
+## Bundler
+set :bundle_without,  [:development, :test, :staging]
+set :bundle_binstubs, -> { shared_path.join('bin') }
+set :bundle_bins, %w(rake rails gem bundle ruby)
+set :bundle_dir, -> { File.join(root_dir, application, 'bundle') }
+set :bundle_flags, "--deployment --quiet"
+set :bundle_jobs, 4
+<% end %>

@@ -1,0 +1,6 @@
+#!/usr/bin/env ruby
+
+require 'roller'
+require 'roller/cli'
+
+Roller::Cli.start(ARGV)
