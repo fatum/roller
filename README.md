@@ -1,10 +1,10 @@
 # Roller
 
-Roller provides
+#### Roller provides
 
 * tasks for generation nginx, unicorn, rbenv, logrotate etc. config files
-* generator for deploy config files
-* based on Capistrano 3.x
+* generation deploy files
+* code based on Capistrano 3.x
 
 ## Installation
 
@@ -28,14 +28,25 @@ Available deploy tasks
 
 `require 'roller/tasks/rbenv'`
 
-Tasks
+#### Tasks
 
 * `rbenv:install` downloads rbenv and install provided ruby version
 * `rbenv:update` updates available ruby versions and install new reby version
 
-Variables
+#### Variables
 
 * `ruby_version` default is 2.1.1
+
+### SSH
+
+#### Tasks
+
+* `ssh:setup` upload ssh keys and update known_hosts with fingerprint
+
+#### Variables
+
+* `ssh_key_path` path to ssh keys (config/deploy/ssh)
+* `ssh_repo_host` host which adds into known_hosts
 
 ## Contributing
 
