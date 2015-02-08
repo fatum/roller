@@ -1,3 +1,5 @@
+require 'roller/tasks'
+
 set :application, "<%= name %>"
 set :ssh_options, {keys: "~/ssh/<%= name %>.pem"}
 
@@ -19,19 +21,19 @@ set :ssh_key_path, File.expand_path("../deploy/ssh", __FILE__)
 set :ssh_repo_host, "git.bitbucket.org"
 
 # which config files should be copied by deploy:setup_config
-set(:config_files, %w(
+set:config_files, %w(
   nginx.conf
   unicorn.rb
   unicorn_init.sh
   database.yml
-))
+)
 
 # files which need to be symlinked to other parts of the
 # filesystem. For example nginx virtualhosts, log rotation
 # init scripts etc. The full_app_name variable isn't
 # available at this point so we use a custom template {{}}
 # tag and then add it at run time.
-set(:symlinks, [
+set:symlinks, [
   {
     source: "nginx.conf",
     link: "/etc/nginx/sites-enabled/app-{{full_app_name}}"
@@ -44,9 +46,8 @@ set(:symlinks, [
     source: "logrotate",
     link: "/etc/logrotate.d/app-{{full_app_name}}"
   },
-])
+]
 
-require 'roller/tasks'
 # require 'roller/tasks/ssh'
 # require 'roller/tasks/stubs'
 
@@ -62,10 +63,24 @@ set :rails_env, "production"
 <% if bundler? %>
 require 'capistrano/bundler'
 ## Bundler
-set :bundle_without,  [:development, :test, :staging]
+set :bundle_roles, :all
+set :bundle_servers, -> { release_roles(fetch(:bundle_roles)) }
+set :bundle_without,  [:development, :test, :staging].join(' ')
 set :bundle_binstubs, -> { shared_path.join('bin') }
-set :bundle_bins, %w(rake rails gem bundle ruby)
-set :bundle_dir, -> { File.join(root_dir, application, 'bundle') }
+set :bundle_bins, %w(rake rails gem ruby)
+set :bundle_dir, -> { File.join(fetch(:root_dir), fetch(:application), 'bundle') }
 set :bundle_flags, "--deployment --quiet"
 set :bundle_jobs, 4
 <% end %>
+
+namespace :deploy do
+  task :git_init do
+    on roles(:app) do
+      within release_path do
+        execute :git, :init
+      end
+    end
+  end
+end
+
+before 'bundler:install', 'deploy:git_init'
