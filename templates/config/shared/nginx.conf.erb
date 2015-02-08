@@ -23,6 +23,36 @@ server {
   add_header Strict-Transport-Security "max-age=31536000; includeSubdomains";
   <% end %>
 
+  <% if fetch(:nginx_gzip) %>
+  ##
+  # Gzip Settings
+  ##
+  gzip on;
+  gzip_disable "msie6";
+
+  gzip_comp_level 6;
+  gzip_min_length  1100;
+  gzip_buffers 16 8k;
+  gzip_proxied any;
+  gzip_http_version 1.1;
+  gzip_types       text/plain application/xml text/css text/js text/xml application/x-javascript application/javascript text/javascript application/json application/xml+rss;
+
+  location ~* \.(png|gif|jpg|jpeg|css|js|swf|ico|txt|xml|bmp|pdf|doc|docx|ppt|pptx|zip|woff|ttf|woff2)$ {
+    add_header Cache-Control public;
+    add_header Access-Control-Allow-Origin *;
+    add_header Access-Control-Request-Method *;
+
+    access_log off;
+    expires 30d;
+  }
+
+  location /favicon.ico {
+    root <%= current_path %>/public;
+
+    return 200;
+  }
+  <% end %>
+
   root <%= current_path %>/public;
 
   access_log <%= shared_path %>/log/nginx.access.log;

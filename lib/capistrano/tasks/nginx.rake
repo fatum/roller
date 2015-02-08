@@ -1,5 +1,6 @@
 namespace :nginx do
   set :nginx_port, 80
+  set :nginx_server_name, 'localhost'
 
   %w(start stop restart reload).each do |task_name|
     desc "#{task } Nginx"
